@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 下載工具</title>
+</head>
+<body>
+    <h2>YouTube 影片下載</h2>
+    <input type="text" id="youtube_url" placeholder="輸入 YouTube 影片網址">
+    <select id="format">
+        <option value="mp4">MP4 (影片)</option>
+        <option value="mp3">MP3 (音訊)</option>
+    </select>
+    <button onclick="downloadVideo()">下載</button>
+
+    <p id="status"></p>
+    <a id="download_link" style="display: none;">點此下載</a>
+
+    <script>
+        function downloadVideo() {
+            let url = document.getElementById("youtube_url").value;
+            let format = document.getElementById("format").value;
+            let status = document.getElementById("status");
+            let downloadLink = document.getElementById("download_link");
+
+            status.innerText = "請稍候，正在處理...";
+            fetch("https://dark-meadow-c020.lmalma111.workers.dev/?url=" + encodeURIComponent(url) + "&format=" + format)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    status.innerText = "下載準備完成";
+                    downloadLink.href = data.download_url;
+                    downloadLink.style.display = "block";
+                    downloadLink.innerText = "點此下載";
+                } else {
+                    status.innerText = "下載失敗：" + data.error;
+                }
+            })
+            .catch(error => {
+                status.innerText = "發生錯誤：" + error;
+            });
+        }
+    </script>
+</body>
+</html>
